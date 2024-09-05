@@ -1,7 +1,7 @@
 const express = require('express');
 //* app is used to define routes, middleware, etc etc.
 const app = express();
-const routes = require('./routes/routes');
+const routes = require('./routes/my_routes');
 
 app.use('/test', routes);
 
