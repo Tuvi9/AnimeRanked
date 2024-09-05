@@ -1,12 +1,11 @@
 const express = require('express');
+//* app is used to define routes, middleware, etc etc.
 const app = express();
-const port = 3000;
+const routes = require('./routes/routes');
 
-//? http.IncomingMessage & http.ServerResponse
-app.get('/', (req, res) => {
-    res.send("I'm Working!")
-})
+app.use('/test', routes);
 
-app.listen(port, () => {
-    console.log(`App is listening on port ${port}`)
-})
+//* I export app since server.js needs acces to it.
+module.exports = app;
+
+
