@@ -1,9 +1,18 @@
 const express = require('express');
 //* app is used to define routes, middleware, etc etc.
 const app = express();
+const path = require('path');
 const routes = require('./routes/my_routes');
 
+//?Render html
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname,'views'));
+app.get('/html', (req, res) => {
+    res.render('index');
+})
+
 app.use('/test', routes);
+
 
 //* I export app since server.js needs acces to it.
 module.exports = app;
