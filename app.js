@@ -4,6 +4,9 @@ const app = express();
 const path = require('path');
 const routes = require('./routes/my_routes');
 
+//? Makes it possible for ejs to access my stylesheets
+app.use(express.static(path.join(__dirname, 'public')));
+
 //?Render html
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'views'));
