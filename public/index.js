@@ -64,7 +64,6 @@ class NavBar extends HTMLElement {
 //! Registering the custom element.
 customElements.define('nav-bar', NavBar)
 
-
 const blogEntryTemplate = document.createElement('template')
 
 blogEntryTemplate.innerHTML = `
@@ -125,19 +124,75 @@ img {
 <!-- AnimeRanked blog entry template --!>
 <div class="centerd-blog">
     <div class="blog-entry">
-        <div class="blog-image"><img src="/images/jujutsu_kaisen_2.jpg"></div>
-        <div class="blog-title"><h2>Jujutsu Kaisen</h2></div>
-        <div class="blog-content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+        <div class="blog-image"><img></div>
+        <div class="blog-title"><h2></h2></div>
+        <div class="blog-content"></div>
     </div>
 </div>
 `;
 
-class BlogEntry extends HTMLElement {
-    constructor() {
-        super()
-        this.attachShadow({ mode: 'open' });
-        this.shadowRoot.appendChild(blogEntryTemplate.content.cloneNode(true));
+//* Loads the initial HTML document before any file manipulation is attempted to prevent errors.
+document.addEventListener('DOMContentLoaded', function() {
+    class BlogEntry extends HTMLElement {
+        //* When an element is created.
+        constructor() {
+            super()
+            //* Allows encapsulated CSS/HTML.
+            this.attachShadow({ mode: 'open' });
+            //* Insert InnerHTML into ShadowDOM.
+            this.shadowRoot.appendChild(blogEntryTemplate.content.cloneNode(true));
+        }
+        //* .blog-image img is now setImage in shadowDOM.
+        setImage(src) {
+            this.shadowRoot.querySelector('.blog-image img').src = src;
+        }
+        //* .blog-title h2 is now setTitle in shadowDOM.
+        setTitle(title) {
+            this.shadowRoot.querySelector('.blog-title h2').textContent = title;
+        }
+        //* .blog-content is now  setContent in shadowDOM.
+        setContent(content) {
+            this.shadowRoot.querySelector('.blog-content').innerHTML = content;
+        }
     }
-}
 
-customElements.define('blog-entry', BlogEntry);
+    //* Registers the custom element <blog-entry></blog-entry>.
+    customElements.define('blog-entry', BlogEntry);
+
+    //* Retrives element ID blog-container from DOM.
+    const blogContainer =  document.getElementById('blog-container');
+    //* Ensures the container exsists before continuing.
+    if(blogContainer) {
+        //* XMLHttpRequest for interacting with the server via HTTP.
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            //* First checks if the request is complete == 4 and if the response status is 200(OK).
+            if (this.readyState == 4 &&  this.status == 200) {
+                //* Parses server JSON file and turns it into a JavaScript array.
+                const responseArray = JSON.parse(this.responseText);
+
+                responseArray.forEach(response => {
+                    const blogEntryElement = document.createElement('blog-entry');
+                    //* Updates customElement blog-entry image, title, description with what was fetched from the database.
+                    blogEntryElement.setImage(response.image);
+                    blogEntryElement.setTitle(response.title);
+                    blogEntryElement.setContent(response.description);
+                    //* Appends said instance to the container blog-container.
+                    blogContainer.appendChild(blogEntryElement);
+                });
+            } else {
+                 //* If empty.
+                console.error('Error: Respose array is empty');
+            }
+        };
+        //* Initializes the Get request.
+        xhttp.open('GET', 'http://localhost:3000/blog/', true)
+        xhttp.setRequestHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        xhttp.setRequestHeader('Pragma', 'no-cache');
+        xhttp.setRequestHeader('Expires', '0');
+        //* Sends the request.
+        xhttp.send();
+        } else {
+            console.log('Error: blog-conainer not found');
+        }
+    });
