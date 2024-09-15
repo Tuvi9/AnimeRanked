@@ -8,20 +8,16 @@ const mongodb = require('./config/database')
 //* Connects to MongoDB
 mongodb.main();
 
-//? Makes it possible for ejs to access my stylesheets
-app.use(express.static(path.join(__dirname, 'public')));
+//? Makes it possible for dist/bundle.js to access index.html
+app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.json());
-
-//?Render html
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname,'views'));
-app.get('/html', (req, res) => {
-    res.render('main');
-})
 
 //* Handles HTTP requests.
 app.use('/blog', routes);
-
+//! A catch-all route must be defined last if not every single request will be caught by it instead.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+})
 
 //* I export app since server.js needs acces to it.
 module.exports = app;

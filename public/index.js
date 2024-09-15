@@ -1,3 +1,5 @@
+import './styles/main.css'
+
 //! HEADER
 const headerTemplate = document.createElement('template')
 
@@ -73,7 +75,7 @@ blogEntryTemplate.innerHTML = `
 <style>
 img {
 /* Maw width && height for the image of the anime so that it doesn't get too big */
-    max-width: 400px;
+    max-width: 250px;
     max-height: 400px;
     border-radius: 10px;
 }
@@ -196,3 +198,19 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Error: blog-conainer not found');
         }
     });
+
+//! Test component to make sure react is running
+
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import HelloWorld from '../src/components/HelloWorld';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const testContainer = document.getElementById('test-container');
+    if(testContainer) {
+        const root = createRoot(testContainer);
+        root.render(<HelloWorld/>)
+    } else {
+        console.log('Error')
+    }
+});
