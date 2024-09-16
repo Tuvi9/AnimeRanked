@@ -1,4 +1,5 @@
 import './styles/main.css'
+import '../src/components/Advertisement.css'
 
 //! HEADER
 const headerTemplate = document.createElement('template')
@@ -199,17 +200,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-//! Test component to make sure react is running
+//! Sidebar advertisement(Made with React)
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import HelloWorld from '../src/components/HelloWorld';
+import Advertisement from '../src/components/Advertisement'
+import Advertisement2 from '../src/components/Advertisement2'
 
+//! NR. 1
 document.addEventListener('DOMContentLoaded', () => {
-    const testContainer = document.getElementById('test-container');
-    if(testContainer) {
-        const root = createRoot(testContainer);
-        root.render(<HelloWorld/>)
+    const adContainer = document.getElementById('ad-container');
+    if(adContainer) {
+        const root = createRoot(adContainer);
+        root.render(<Advertisement/>)
+    } else {
+        console.log('Error')
+    }
+});
+
+//! NR. 2
+document.addEventListener('DOMContentLoaded', () => {
+    const adContainer2 = document.getElementById('ad-container2');
+    if(adContainer2) {
+        const root = createRoot(adContainer2);
+        root.render(<Advertisement2/>)
     } else {
         console.log('Error')
     }

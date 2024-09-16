@@ -4,3 +4,48 @@ body {
     padding: 0;
     background-color: purple;
 }
+
+/* Gridbox layout for the components that reside on the main page */
+.website-layout {
+    display: grid;
+    grid-template-columns: auto, auto, auto;
+}
+
+/* Centers the blog entries */
+.website-layout #blog-container {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+/* Alligns Advertisement NR. 1 to the left */
+.website-layout #ad-container {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+/* Alligns Advertisement NR. 2 to the right */
+.website-layout #ad-container2 {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+/* Adds padding for both ad 1 && 2 */
+#ad-container, #ad-container2 {
+    padding: 20px
+}
+
+/* Alligns Advertisement NR. 1 to the left of it's respective grid-box */
+#ad-container {
+    display: grid;
+    justify-content: start;
+}
+
+/* Alligns Advertisement NR. 2 to the right of it's respective grid-box */
+#ad-container2 {
+    display: grid;
+    justify-content: end;
+}
