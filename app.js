@@ -4,9 +4,13 @@ const app = express();
 const path = require('path');
 const routes = require('./routes/my_routes');
 const mongodb = require('./config/database')
+const supabase = require('./config/supabaseClient')
 
-//* Connects to MongoDB
+//* Connected to MongoDB
 mongodb.main();
+
+//* Connected to Supabase
+// console.log(supabase)
 
 //? Makes it possible for dist/bundle.js to access index.html
 app.use(express.static(path.join(__dirname, 'dist')));
