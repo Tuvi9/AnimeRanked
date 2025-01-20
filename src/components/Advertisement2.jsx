@@ -1,4 +1,5 @@
 import React from "react";
+import './Advertisement.css'
 
 
 //! Advertisement box nr.2 HTML

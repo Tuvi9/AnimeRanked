@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./Advertisement.css"  // Update import path
 
 //! Advertisement box nr.1 HTML
 const Advertisement = () => {

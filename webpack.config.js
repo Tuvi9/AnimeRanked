@@ -5,16 +5,18 @@ const { default: test } = require('node:test');
 module.exports = {
     mode: "development",
     //! Entry point where webpack starts building a dependency graph
-    entry: './public/index.js',
+    entry: {
+        main: ['./public/index.js', './src/index.js']  // Keep both entry points
+    },
 
     //! Specifies where to bundle all the files.
     output: {
+        filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
     },
 
     module: {
-        //? Defining how differet types of modules should be treated
+        //? Defining how different types of modules should be treated
         rules: [
             {
                 test: /\.(js|jsx)$/,
@@ -45,6 +47,12 @@ module.exports = {
     ],
 
     resolve: {
-        extensions: [".js",".jsx"],
+        extensions: ['.js', '.jsx'],
+        fallback: {
+            "buffer": require.resolve("buffer/"),
+            "crypto": require.resolve("crypto-browserify"),
+            "stream": require.resolve("stream-browserify"),
+            "util": require.resolve("util/"),
+        }
     }
 }

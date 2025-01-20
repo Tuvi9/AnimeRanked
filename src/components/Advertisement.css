@@ -1,8 +1,20 @@
 /* Global stylesheet for the advertisement boxes*/
 .ad-box {
     background-color: white;
-    max-height: 100%;
     width: 150px;
+    height: calc(100vh - 100px);
     border: 5px solid black;
     border-radius: 10px;
+    position: fixed;
+    top: 100px;
+}
+
+/* Left advertisement */
+#ad-container .ad-box {
+    left: 20px;
+}
+
+/* Right advertisement */
+#ad-container2 .ad-box {
+    right: 20px;
 }

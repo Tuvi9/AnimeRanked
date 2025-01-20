@@ -10,10 +10,23 @@ const supabase = require('./config/supabaseClient')
 mongodb.main();
 
 //* Connected to Supabase
-// console.log(supabase)
+const initSupabase = async () => {
+    try {
+        // Test the connection by making a simple query
+        const { data, error } = await supabase.from('Anime').select('*').limit(1);
+        if (error) throw error;
+        console.log('Successfully connected to Supabase');
+    } catch (error) {
+        console.error('Error connecting to Supabase:', error.message);
+    }
+}
+
+initSupabase();
 
 //? Makes it possible for dist/bundle.js to access index.html
 app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/src', express.static(path.join(__dirname, 'src')));
 app.use(express.json());
 
 //* Handles HTTP requests.
