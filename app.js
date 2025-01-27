@@ -2,12 +2,8 @@ const express = require('express');
 //* app is used to define routes, middleware, etc etc.
 const app = express();
 const path = require('path');
-const routes = require('./routes/my_routes');
-const mongodb = require('./config/database')
+const routes = require('./routes/my_routes');``
 const supabase = require('./config/supabaseClient')
-
-//* Connected to MongoDB
-mongodb.main();
 
 //* Connected to Supabase
 const initSupabase = async () => {

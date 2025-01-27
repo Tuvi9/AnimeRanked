@@ -1,66 +1,80 @@
 //* Imports defined mongoose schema for interacting with MongoDB
 const { response } = require('express');
-const blogModel = require('../models/blogModel')
+const supabase = require('../config/supabaseClient');
+
 
 //* Creates a new blog
 const createBlog = async (req, res, next) => {
-
+    const animeReview = req.body;
     try {
         //* req.body contains the data sent.
-        const createModel = await blogModel.create(req.body)
-        //* If successful send 201(Created)
-        res.status(201).json(createModel)
+        const { data, error } = await supabase
+            .from('Anime')
+            .insert({
+            title: animeReview.title,
+            description: animeReview.description,
+            image: animeReview.image
+        })
+
+        if (error) throw error;
+        res.status(200).json(data)
     } catch(error) {
         console.log(error);
+        res.status(500).json({ error: error.message })
     }
 };
 
 //* Returns all exsisting blogs
 const getBlogs = async (req, res, next) => {
-    //* {} means it will return all documents form the MongoDB collection
-    const allBlogs = await blogModel.find({})
-    //* If successful send 200(OK)
-    res.status(200).json(allBlogs)
-};
+    try {
+        const { data, error } = await supabase
+            .from('Anime')
+            .select('*')
+
+        if (error) throw error;
+        res.status(200).json(data)
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ error: error.message })
+    }
+}
 
 //* Updates blog by id
 const updateBlogs = async (req, res, next) => {
     //* Extracts id from URL(:id)
     const { id } = req.params;
-    try {
-        //* mongoose findByIdAndUpdate  finds the blog and updates it with the data in req.body
-        //* { new: true } returns the updated document
-        const updatedBlog = await blogModel.findByIdAndUpdate(id, req.body, { new: true });
-        //* if no blog is found
-        if (!updatedBlog) {
-            return res.status(404).json({ error: 'Blog not found' });
-        }
-        //* if success
-        res.status(200).json(updatedBlog);
-    //* if unexpected error occurs
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
+    const { newDescription } = req.body;
+    console.log(newDescription)
+    console.log(id)
 
+    try {
+        const { data, error } = await supabase
+            .from('Anime')
+            .update({ description: newDescription })
+            .eq('id', id)
+
+        if (error) throw error;
+        res.status(200).json(AnimeUpdate)
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({ error: error.message })
+    }
+}
 //* Deletes blog by id
 const deleteBlogs = async (req, res, next) => {
     //* Extracts id from URL(:id)
     const { id } = req.params;
     try {
-        //* mongoose findByIdAndDelete  finds the blog with said :id and deletes it
-        const deletedBlog = await blogModel.findByIdAndDelete(id);
-        //* if no blog found to delete
-        if (!deletedBlog) {
-            return res.status(404).json({ error: 'Blog not found' });
-        }
-        //* if success send code which means 'no content'
-        res.status(204).send();
-    //* if unexpected error occurs
-    } catch (error) {
+        const { data, error } = await supabase
+            .from('Anime')
+            .delete()
+            .eq('id', id)
+
+        if (error) throw error;
+        res.status(200).json(data)
+    } catch(error) {
         console.log(error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message })
     }
 }
 
