@@ -5,16 +5,17 @@ const supabase = require('../config/supabaseClient');
 
 //* Creates a new blog
 const createBlog = async (req, res, next) => {
-    const animeReview = req.body;
+    const { title, description, image, user_id } = req.body;
     try {
         //* req.body contains the data sent.
         const { data, error } = await supabase
             .from('Anime')
             .insert({
-            title: animeReview.title,
-            description: animeReview.description,
-            image: animeReview.image
-        })
+                title: title,
+                description: description,
+                image: image,
+                user_id: user_id
+            })
 
         if (error) throw error;
         res.status(200).json(data)
@@ -26,10 +27,12 @@ const createBlog = async (req, res, next) => {
 
 //* Returns all exsisting blogs
 const getBlogs = async (req, res, next) => {
+    const { user_id } = req.query;
     try {
         const { data, error } = await supabase
             .from('Anime')
             .select('*')
+            .eq('user_id', user_id)
 
         if (error) throw error;
         res.status(200).json(data)
@@ -41,11 +44,8 @@ const getBlogs = async (req, res, next) => {
 
 //* Updates blog by id
 const updateBlogs = async (req, res, next) => {
-    //* Extracts id from URL(:id)
     const { id } = req.params;
     const { newDescription } = req.body;
-    console.log(newDescription)
-    console.log(id)
 
     try {
         const { data, error } = await supabase
@@ -54,7 +54,7 @@ const updateBlogs = async (req, res, next) => {
             .eq('id', id)
 
         if (error) throw error;
-        res.status(200).json(AnimeUpdate)
+        res.status(200).json(data)
     } catch(error) {
         console.log(error);
         res.status(500).json({ error: error.message })
@@ -78,9 +78,37 @@ const deleteBlogs = async (req, res, next) => {
     }
 }
 
+//* Creates a new user profile in Supabase
+const createUserProfile = async (req, res, next) => {
+    const { uid, username, email } = req.body;
+    console.log('Attempting to create profile:', { uid, username, email });
+
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .insert({
+                id: uid,
+                username: username,
+                email: email
+            });
+
+        if (error) {
+            console.error('Supabase error:', error);
+            throw error;
+        }
+        
+        console.log('Profile created successfully:', data);
+        res.status(200).json(data)
+    } catch(error) {
+        console.error('Failed to create profile:', error);
+        res.status(500).json({ error: error.message })
+    }
+};
+
 module.exports = {
-createBlog,
-getBlogs,
-updateBlogs,
-deleteBlogs
+    createBlog,
+    getBlogs,
+    updateBlogs,
+    deleteBlogs,
+    createUserProfile
 }

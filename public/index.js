@@ -33,6 +33,8 @@ onAuthStateChanged(auth, user => {
                 loginElement.textContent = 'Profile';
             }
         }
+        // Fetch blogs for logged in user
+        fetchUserBlogs(user.uid);
     } else {
         console.log('No user');
         const navBar = document.querySelector('nav-bar');
@@ -42,8 +44,38 @@ onAuthStateChanged(auth, user => {
                 loginElement.textContent = 'Log In';
             }
         }
+        // Clear blogs when logged out
+        const blogContainer = document.getElementById('blog-container');
+        if(blogContainer) {
+            blogContainer.innerHTML = '';
+        }
     }
 });
+
+// Function to fetch user's blogs
+function fetchUserBlogs(userId) {
+    const blogContainer = document.getElementById('blog-container');
+    if(blogContainer) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                const responseArray = JSON.parse(this.responseText);
+                console.log('Fetched blogs:', responseArray);  // Add this to see what we get
+
+                blogContainer.innerHTML = '';  // Clear existing blogs
+                responseArray.forEach(response => {
+                    const blogEntryElement = document.createElement('blog-entry');
+                    blogEntryElement.setImage(response.image);
+                    blogEntryElement.setTitle(response.title);
+                    blogEntryElement.setContent(response.description);
+                    blogContainer.appendChild(blogEntryElement);
+                });
+            }
+        };
+        xhttp.open('GET', `http://localhost:3000/blog?user_id=${userId}`, true);
+        xhttp.send();
+    }
+}
 
 //! HEADER
 const headerTemplate = document.createElement('template')
@@ -70,9 +102,10 @@ headerTemplate.innerHTML = `
         font-family: sans-serif;
     }
 
-    .website-header-anime, .website-header-manga, .website-header-login {
+    .website-header-anime, .website-header-manga, .website-header-login, .website-header-logout {
         font-size: 20px;
         text-decoration: underline;
+        cursor: pointer;
     }
     </style>
 
@@ -83,6 +116,7 @@ headerTemplate.innerHTML = `
                 <div class="website-header-anime">Anime</div>
                 <div class="website-header-manga">Manga</div>
                 <div class="website-header-login">Log In</div>
+                <div class="website-header-logout">Log Out</div>
             </div>
         </div>
     </nav>
@@ -94,6 +128,17 @@ class NavBar extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(headerTemplate.content.cloneNode(true));
+
+        // Add click handler for logout
+        const logoutButton = this.shadowRoot.querySelector('.website-header-logout');
+        logoutButton.addEventListener('click', () => {
+            const auth = getAuth();
+            auth.signOut().then(() => {
+                console.log('User signed out');
+            }).catch((error) => {
+                console.error('Sign out error:', error);
+            });
+        });
     }
 }
 

@@ -92,24 +92,41 @@ class CreateAccountModal extends HTMLElement {
         const password = this.shadowRoot.querySelector('#password').value;
         const confirmPassword = this.shadowRoot.querySelector('#confirm-password').value;
         
-        // Validate passwords match
         if (password !== confirmPassword) {
             this.showError('Passwords do not match');
             return;
         }
         
         try {
+            // 1. Create Firebase auth user (same as before)
             const auth = getAuth();
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             
-            // Update the user's profile with the username
+            // 2. Update Firebase profile (same as before)
             await updateProfile(userCredential.user, {
                 displayName: username
             });
+
+            // 3. Store user data in Supabase database (not auth)
+            const response = await fetch('http://localhost:3000/blog/create-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    uid: userCredential.user.uid,  // Use Firebase UID to link the data
+                    username: username,
+                    email: email
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to store user data');
+            }
             
             this.hideModal();
         } catch (error) {
-            console.error('Registration error:', error);
+            console.error('Error:', error);
             let errorMessage = 'Registration failed. Please try again.';
             
             if (error.code === 'auth/email-already-in-use') {
